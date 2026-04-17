@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Mi Agenda</title>
+<title>Mi Agenda de Bienestar</title>
 
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -32,7 +32,7 @@
     background: var(--cream);
     color: var(--text);
     min-height: 100vh;
-    padding-bottom: 80px;
+    padding-bottom: 90px;
   }
 
   header {
@@ -43,14 +43,14 @@
     position: sticky; top: 0; z-index: 100;
   }
 
-  .header-brand { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+  .header-brand { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-weight: 600; }
   .header-date { font-size: 0.8rem; color: var(--text-light); text-transform: capitalize; }
 
   main { padding: 20px 16px; max-width: 500px; margin: 0 auto; }
   
-  .section { display: none; animation: fadeIn 0.3s ease; }
+  .section { display: none; animation: fadeIn 0.4s ease; }
   .section.active { display: block; }
-  @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
+  @keyframes fadeIn { from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:translateY(0)} }
 
   .card {
     background: var(--card); border-radius: 20px;
@@ -70,6 +70,23 @@
   .mood-btn { font-size: 1.8rem; background: none; border: 2px solid transparent; border-radius: 50%; cursor: pointer; transition: 0.2s; padding: 5px; }
   .mood-btn.selected { border-color: var(--rose-deep); background: var(--rose-light); }
 
+  /* RINCÓN DE LUZ */
+  .magic-box {
+    background: linear-gradient(135deg, #fff9f9 0%, #f5d5d5 100%);
+    text-align: center; border: 1px dashed var(--rose-deep);
+  }
+  .phrase-display {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.25rem; font-style: italic; color: var(--rose-deep);
+    margin: 15px 0; min-height: 60px; display: flex; align-items: center; justify-content: center;
+  }
+
+  .btn-magic {
+    background: var(--rose-deep); color: white; border: none;
+    padding: 10px 20px; border-radius: 50px; font-size: 0.8rem;
+    cursor: pointer; box-shadow: 0 4px 10px rgba(196,120,120,0.3);
+  }
+
   .days-strip { display: flex; gap: 10px; overflow-x: auto; padding: 5px 0 15px; scrollbar-width: none; }
   .day-chip {
     min-width: 55px; padding: 10px; border-radius: 15px;
@@ -81,7 +98,7 @@
   .task-item { display: flex; align-items: center; gap: 12px; padding: 12px; background: white; border-radius: 12px; margin-bottom: 8px; border: 1px solid #f0f0f0; }
   .task-item.done { opacity: 0.5; text-decoration: line-through; }
   
-  .btn-add { background: var(--rose-deep); color: white; border: none; border-radius: 12px; padding: 10px 18px; cursor: pointer; font-weight: bold; }
+  .btn-add { background: var(--rose-deep); color: white; border: none; border-radius: 12px; padding: 10px 18px; cursor: pointer; }
 
   nav {
     position: fixed; bottom: 0; left: 0; right: 0;
@@ -91,13 +108,12 @@
   }
   .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; background: none; border: none; color: var(--text-light); font-size: 0.75rem; gap: 4px; }
   .nav-btn.active { color: var(--rose-deep); }
-  .nav-btn svg { width: 24px; height: 24px; }
+  .nav-btn svg { width: 22px; height: 22px; }
 
   #toast {
     position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
     background: var(--text); color: white; padding: 12px 25px; border-radius: 30px;
-    font-size: 0.9rem; opacity: 0; transition: 0.4s; z-index: 2000; pointer-events: none;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2); text-align: center;
+    font-size: 0.85rem; opacity: 0; transition: 0.4s; z-index: 2000; text-align: center;
   }
 </style>
 </head>
@@ -110,6 +126,12 @@
 
 <main>
   <section class="section active" id="sec-home">
+    <div class="card magic-box">
+      <div class="card-title" style="justify-content: center;">✨ Rincón de Luz</div>
+      <div class="phrase-display" id="phraseDisplay">Pulsa el botón para una dosis de amor propio...</div>
+      <button class="btn-magic" onclick="newPhrase()">Ver frase de hoy</button>
+    </div>
+
     <div class="card">
       <div class="card-title">Agradecimiento del día 🌿</div>
       <textarea class="note-area" id="gratitude" placeholder="Hoy agradezco por..." rows="3"></textarea>
@@ -127,10 +149,8 @@
     </div>
 
     <div class="card">
-      <div class="card-title">Resumen de la semana</div>
-      <div id="weekSummary" style="font-size: 0.95rem; color: var(--text); line-height: 1.6;">
-        Calculando tus progresos...
-      </div>
+      <div class="card-title">Resumen semanal</div>
+      <div id="weekSummary" style="font-size: 0.95rem; line-height: 1.6;"></div>
     </div>
   </section>
 
@@ -139,7 +159,7 @@
     <div class="card">
       <div class="card-title" id="selectedDayTitle">Tareas</div>
       <div style="display:flex; gap:8px; margin-bottom:15px;">
-        <input type="text" class="note-area" id="taskInput" placeholder="Nueva tarea..." style="padding: 10px;">
+        <input type="text" class="note-area" id="taskInput" placeholder="Añadir algo importante..." style="padding: 10px;">
         <button class="btn-add" onclick="addTask()">+</button>
       </div>
       <div id="taskList"></div>
@@ -148,11 +168,11 @@
 
   <section class="section" id="sec-alerts">
     <div class="card">
-      <div class="card-title">Configurar Recordatorio 🔔</div>
+      <div class="card-title">Nuevo Recordatorio 🔔</div>
       <div style="display:flex; flex-direction:column; gap:12px;">
         <input type="time" id="alertTime" class="note-area" style="padding:10px;">
-        <input type="text" id="alertText" class="note-area" placeholder="¿Qué quieres recordar?" style="padding:10px;">
-        <button class="btn-add" onclick="addAlert()" style="padding:15px;">Guardar Alerta</button>
+        <input type="text" id="alertText" class="note-area" placeholder="¿Qué debo recordarte?" style="padding:10px;">
+        <button class="btn-add" onclick="addAlert()" style="padding:15px; font-weight: bold;">Guardar Recordatorio</button>
       </div>
     </div>
     <div id="alertList"></div>
@@ -170,31 +190,34 @@
   </button>
   <button class="nav-btn" onclick="switchTab('alerts', this)">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
-    Alertas
+    Recordatorios
   </button>
 </nav>
 
 <div id="toast"></div>
 
 <script>
-// ESTADO Y CARGA
-let state = {
-  tasks: {},
-  moods: {},
-  gratitude: {},
-  alerts: []
-};
-
+let state = { tasks: {}, moods: {}, gratitude: {}, alerts: [] };
 const TODAY = new Date().toISOString().split('T')[0];
 let selectedDay = TODAY;
 
-function save() { localStorage.setItem('mi_agenda_data', JSON.stringify(state)); updateSummary(); }
+const phrases = [
+  "Eres más fuerte de lo que crees y más capaz de lo que imaginas. ✨",
+  "Tu luz propia es capaz de iluminar hasta el día más gris. 🌿",
+  "No tienes que ser perfecta para ser increíble. 🌸",
+  "Respira, confía y recuerda por qué empezaste. 🕊️",
+  "Cada día es una nueva oportunidad para florecer a tu ritmo. 🌷",
+  "Eres suficiente, tal y como eres ahora mismo. 💖",
+  "Hoy es un buen día para ser amable contigo misma. ✨",
+  "Tus sueños no tienen fecha de caducidad. ¡Sigue adelante! ☀️"
+];
+
+function save() { localStorage.setItem('mi_agenda_bienestar', JSON.stringify(state)); updateSummary(); }
 function load() {
-  const saved = localStorage.getItem('mi_agenda_data');
+  const saved = localStorage.getItem('mi_agenda_bienestar');
   if(saved) state = JSON.parse(saved);
 }
 
-// INICIALIZACIÓN
 function init() {
   load();
   renderDate();
@@ -202,15 +225,18 @@ function init() {
   renderTasks();
   renderAlerts();
   updateSummary();
-  
   document.getElementById('gratitude').value = state.gratitude[TODAY] || "";
-  document.getElementById('gratitude').oninput = (e) => {
-    state.gratitude[TODAY] = e.target.value;
-    save();
-  };
+  document.getElementById('gratitude').oninput = (e) => { state.gratitude[TODAY] = e.target.value; save(); };
+}
 
-  // Verificar alertas cada minuto
-  setInterval(checkAlerts, 30000);
+function newPhrase() {
+  const display = document.getElementById('phraseDisplay');
+  const random = phrases[Math.floor(Math.random() * phrases.length)];
+  display.style.opacity = 0;
+  setTimeout(() => {
+    display.textContent = random;
+    display.style.opacity = 1;
+  }, 300);
 }
 
 function renderDate() {
@@ -220,37 +246,20 @@ function renderDate() {
 
 function updateSummary() {
   const last7Days = Array.from({length: 7}, (_, i) => {
-    const d = new Date();
-    d.setDate(d.getDate() - i);
+    const d = new Date(); d.setDate(d.getDate() - i);
     return d.toISOString().split('T')[0];
   });
-
-  const thanksCount = last7Days.filter(day => state.gratitude[day] && state.gratitude[day].length > 2).length;
-  
-  let totalTasks = 0;
-  let completedTasks = 0;
-  last7Days.forEach(day => {
-    if(state.tasks[day]) {
-      totalTasks += state.tasks[day].length;
-      completedTasks += state.tasks[day].filter(t => t.done).length;
-    }
-  });
-
-  const summaryHTML = `
-    ✨ Has agradecido <b>${thanksCount} de los últimos 7 días</b>.<br>
-    ✅ Has completado <b>${completedTasks} tareas</b> esta semana.<br>
-    ${thanksCount >= 5 ? '🌟 ¡Qué buena racha de gratitud!' : '🌿 Sigue así, cada día cuenta.'}
-  `;
-  document.getElementById('weekSummary').innerHTML = summaryHTML;
+  const thanksCount = last7Days.filter(day => state.gratitude[day]?.length > 2).length;
+  let comp = 0;
+  last7Days.forEach(day => { if(state.tasks[day]) comp += state.tasks[day].filter(t => t.done).length; });
+  document.getElementById('weekSummary').innerHTML = `🌸 Has agradecido <b>${thanksCount} días</b> esta semana.<br>✅ Has cumplido <b>${comp} metas</b>. ¡Eres increíble!`;
 }
 
-// GESTIÓN DE TAREAS
 function renderWeekStrip() {
   const strip = document.getElementById('daysStrip');
   strip.innerHTML = '';
   for(let i = -2; i < 5; i++) {
-    const d = new Date();
-    d.setDate(d.getDate() + i);
+    const d = new Date(); d.setDate(d.getDate() + i);
     const k = d.toISOString().split('T')[0];
     const chip = document.createElement('div');
     chip.className = `day-chip ${k === selectedDay ? 'active' : ''}`;
@@ -265,21 +274,20 @@ function addTask() {
   if(!input.value.trim()) return;
   if(!state.tasks[selectedDay]) state.tasks[selectedDay] = [];
   state.tasks[selectedDay].push({ id: Date.now(), text: input.value, done: false });
-  input.value = '';
-  save(); renderTasks();
+  input.value = ''; save(); renderTasks();
 }
 
 function renderTasks() {
   const list = document.getElementById('taskList');
   const dayTasks = state.tasks[selectedDay] || [];
-  document.getElementById('selectedDayTitle').textContent = selectedDay === TODAY ? "Tareas de hoy" : "Tareas seleccionadas";
+  document.getElementById('selectedDayTitle').textContent = selectedDay === TODAY ? "Mis metas hoy" : "Metas del día";
   list.innerHTML = dayTasks.length ? dayTasks.map(t => `
     <div class="task-item ${t.done ? 'done' : ''}">
       <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTask(${t.id})">
       <span style="flex:1">${t.text}</span>
-      <span onclick="deleteTask(${t.id})" style="cursor:pointer; color:var(--rose-deep)">✕</span>
+      <span onclick="deleteTask(${t.id})" style="color:var(--rose-deep)">✕</span>
     </div>
-  `).join('') : '<p style="color:#aaa; text-align:center; padding:20px;">No hay tareas</p>';
+  `).join('') : '<p style="color:#aaa; text-align:center; padding:20px;">Hoy es un lienzo en blanco...</p>';
 }
 
 function toggleTask(id) {
@@ -292,16 +300,13 @@ function deleteTask(id) {
   save(); renderTasks();
 }
 
-// ALERTAS Y SONIDO
 function addAlert() {
   const time = document.getElementById('alertTime').value;
   const text = document.getElementById('alertText').value;
   if(!time || !text) return;
   state.alerts.push({ id: Date.now(), time, text, active: true });
-  document.getElementById('alertTime').value = "";
-  document.getElementById('alertText').value = "";
   save(); renderAlerts();
-  showToast("🔔 Alerta guardada");
+  showToast("💖 Recordatorio guardado");
 }
 
 function renderAlerts() {
@@ -319,36 +324,6 @@ function deleteAlert(id) {
   save(); renderAlerts();
 }
 
-function playBeep() {
-  const context = new (window.AudioContext || window.webkitAudioContext)();
-  const osc = context.createOscillator();
-  const gain = context.createGain();
-  osc.connect(gain);
-  gain.connect(context.destination);
-  osc.type = 'sine';
-  osc.frequency.setValueAtTime(880, context.currentTime); // Nota La
-  gain.gain.setValueAtTime(0, context.currentTime);
-  gain.gain.linearRampToValueAtTime(0.5, context.currentTime + 0.1);
-  gain.gain.linearRampToValueAtTime(0, context.currentTime + 0.5);
-  osc.start();
-  osc.stop(context.currentTime + 0.6);
-}
-
-function checkAlerts() {
-  const now = new Date();
-  const currentTime = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
-  
-  state.alerts.forEach((alert, index) => {
-    if(alert.active && alert.time === currentTime) {
-      playBeep();
-      showToast("📢 RECORDATORIO: " + alert.text);
-      alert.active = false; // Desactivar para que no suene cada 30 seg
-      save();
-    }
-  });
-}
-
-// UI HELPERS
 function setMood(emoji, btn) {
   state.moods[TODAY] = emoji;
   document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
@@ -366,11 +341,10 @@ function switchTab(tab, btn) {
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.innerHTML = msg; t.style.opacity = 1;
-  setTimeout(() => t.style.opacity = 0, 4000);
+  setTimeout(() => t.style.opacity = 0, 3000);
 }
 
 window.onload = init;
 </script>
-
 </body>
 </html>
