@@ -3,15 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Mi Agenda de Bienestar</title>
+<title>Mi Agenda</title>
 
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Mi Agenda">
-<link rel="apple-touch-icon" href="https://img.icons8.com/fluency/180/moon-star.png">
-<link rel="icon" type="image/png" href="https://img.icons8.com/fluency/48/moon-star.png">
+<link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/1164/1164951.png">
+<link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/1164/1164951.png">
 
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 
 <style>
   :root {
@@ -19,13 +18,11 @@
     --rose-deep: #c47878;
     --rose-light: #f5d5d5;
     --cream: #fdf0f0;
-    --lavender: #d4b8e0;
-    --sky: #b8d4e8;
     --text: #5a3535;
     --text-light: #9e6e6e;
     --white: #fff9f9;
-    --card: rgba(255,249,249,0.85);
-    --shadow: 0 4px 24px rgba(196,120,120,0.13);
+    --card: rgba(255,249,249,0.9);
+    --shadow: 0 4px 20px rgba(196,120,120,0.1);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -35,266 +32,225 @@
     background: var(--cream);
     color: var(--text);
     min-height: 100vh;
-    overflow-x: hidden;
+    padding-bottom: 80px;
   }
-
-  /* ── SPLASH SCREEN ── */
-  #splash {
-    position: fixed; inset: 0; z-index: 999;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    background: linear-gradient(135deg, #f9d4e8 0%, #e8d4f9 30%, #d4e8f9 60%, #f9e8d4 100%);
-    transition: opacity .6s ease;
-  }
-  #splash.hide { opacity: 0; pointer-events: none; }
-
-  .splash-orb {
-    width: 160px; height: 160px;
-    border-radius: 50%;
-    background: white;
-    display: flex; align-items: center; justify-content: center;
-    box-shadow: var(--shadow);
-    margin-bottom: 24px;
-    font-size: 80px;
-    animation: float 4s ease-in-out infinite;
-  }
-  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-15px)} }
-
-  .btn-enter {
-    background: var(--rose-deep);
-    color: white; border: none; border-radius: 50px;
-    padding: 14px 40px; font-size: 1rem;
-    font-weight: 500; cursor: pointer;
-    box-shadow: 0 4px 20px rgba(196,120,120,0.4);
-  }
-
-  /* ── APP SHELL ── */
-  #app { display: none; flex-direction: column; min-height: 100vh; }
-  #app.show { display: flex; }
 
   header {
     background: var(--white);
+    padding: 20px;
+    display: flex; justify-content: space-between; align-items: center;
     border-bottom: 1px solid var(--rose-light);
-    padding: 15px 20px;
-    display: flex; align-items: center; justify-content: space-between;
     position: sticky; top: 0; z-index: 100;
-    backdrop-filter: blur(10px);
   }
-  .header-brand { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 600; }
-  .header-date { font-size: .85rem; color: var(--text-light); }
 
-  /* ── NAVIGATION ── */
-  nav {
-    position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
-    background: var(--white);
-    border-top: 1px solid var(--rose-light);
-    display: flex; padding-bottom: env(safe-area-inset-bottom, 10px);
-  }
-  .nav-btn {
-    flex: 1; display: flex; flex-direction: column;
-    align-items: center; padding: 10px;
-    background: none; border: none; color: var(--text-light);
-    font-size: .7rem; transition: 0.3s;
-  }
-  .nav-btn.active { color: var(--rose-deep); }
-  .nav-btn svg { width: 22px; height: 22px; margin-bottom: 4px; }
+  .header-brand { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+  .header-date { font-size: 0.8rem; color: var(--text-light); text-transform: capitalize; }
 
-  /* ── SECTIONS & CARDS ── */
-  main { flex: 1; padding: 20px 16px 100px; max-width: 500px; margin: 0 auto; width: 100%; }
-  .section { display: none; }
-  .section.active { display: block; animation: fadeIn 0.4s ease; }
-  @keyframes fadeIn { from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:translateY(0)} }
+  main { padding: 20px 16px; max-width: 500px; margin: 0 auto; }
+  
+  .section { display: none; animation: fadeIn 0.3s ease; }
+  .section.active { display: block; }
+  @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
 
   .card {
     background: var(--card); border-radius: 20px;
     padding: 20px; margin-bottom: 16px;
     box-shadow: var(--shadow); border: 1px solid rgba(232,164,164,0.1);
   }
-  .card-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.25rem; font-weight: 600; margin-bottom: 15px;
-  }
 
-  /* ── INPUTS ── */
+  .card-title { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 600; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+
   .note-area {
-    width: 100%; border: 1.5px solid var(--rose-light);
+    width: 100%; border: 1px solid var(--rose-light);
     border-radius: 15px; padding: 12px; font-family: inherit;
-    font-size: 0.95rem; resize: none; outline: none;
-  }
-  .task-input {
-    flex: 1; border: 1.5px solid var(--rose-light);
-    border-radius: 12px; padding: 10px; outline: none;
-  }
-  .btn-add {
-    background: var(--rose-deep); color: white;
-    border: none; border-radius: 12px; padding: 0 15px; cursor: pointer;
+    font-size: 1rem; resize: none; outline: none; background: var(--white);
   }
 
-  /* ── ELEMENTS ── */
-  .task-item {
-    display: flex; align-items: center; gap: 10px;
-    padding: 10px; background: white; border-radius: 12px; margin-bottom: 8px;
-  }
-  .task-item.done { opacity: 0.5; text-decoration: line-through; }
-  .mood-row { display: flex; justify-content: space-around; margin: 10px 0; }
-  .mood-btn { font-size: 1.8rem; background: none; border: 2px solid transparent; border-radius: 50%; cursor: pointer; transition: 0.2s; }
+  .mood-row { display: flex; justify-content: space-between; margin: 10px 0; }
+  .mood-btn { font-size: 1.8rem; background: none; border: 2px solid transparent; border-radius: 50%; cursor: pointer; transition: 0.2s; padding: 5px; }
   .mood-btn.selected { border-color: var(--rose-deep); background: var(--rose-light); }
 
-  .days-strip { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; }
+  .days-strip { display: flex; gap: 10px; overflow-x: auto; padding: 5px 0 15px; scrollbar-width: none; }
   .day-chip {
     min-width: 55px; padding: 10px; border-radius: 15px;
     background: white; border: 1px solid var(--rose-light);
-    text-align: center; cursor: pointer;
+    text-align: center; cursor: pointer; flex-shrink: 0;
   }
-  .day-chip.active { background: var(--rose-deep); color: white; }
+  .day-chip.active { background: var(--rose-deep); color: white; border-color: var(--rose-deep); }
+
+  .task-item { display: flex; align-items: center; gap: 12px; padding: 12px; background: white; border-radius: 12px; margin-bottom: 8px; border: 1px solid #f0f0f0; }
+  .task-item.done { opacity: 0.5; text-decoration: line-through; }
+  
+  .btn-add { background: var(--rose-deep); color: white; border: none; border-radius: 12px; padding: 10px 18px; cursor: pointer; font-weight: bold; }
+
+  nav {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: var(--white); border-top: 1px solid var(--rose-light);
+    display: flex; padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
+    z-index: 100;
+  }
+  .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; background: none; border: none; color: var(--text-light); font-size: 0.75rem; gap: 4px; }
+  .nav-btn.active { color: var(--rose-deep); }
+  .nav-btn svg { width: 24px; height: 24px; }
 
   #toast {
-    position: fixed; bottom: 85px; left: 50%; transform: translateX(-50%);
-    background: #333; color: white; padding: 8px 20px; border-radius: 20px;
-    font-size: 0.8rem; opacity: 0; transition: 0.3s; z-index: 1000;
+    position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+    background: var(--text); color: white; padding: 12px 25px; border-radius: 30px;
+    font-size: 0.9rem; opacity: 0; transition: 0.4s; z-index: 2000; pointer-events: none;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2); text-align: center;
   }
 </style>
 </head>
 <body>
 
-<div id="splash">
-  <div class="splash-orb">🌙</div>
-  <h1 style="font-family:'Cormorant Garamond'; font-size: 2.5rem;">Mi Agenda</h1>
-  <p style="margin-bottom: 30px; color: var(--text-light);">Agradecimiento y Bienestar</p>
-  <button class="btn-enter" onclick="enterApp()">Comenzar ✨</button>
-</div>
+<header>
+  <div class="header-brand">☀️ Mi Agenda</div>
+  <div class="header-date" id="headerDate"></div>
+</header>
 
-<div id="app">
-  <header>
-    <div class="header-brand">☀️ Mi Agenda</div>
-    <div class="header-date" id="headerDate"></div>
-  </header>
+<main>
+  <section class="section active" id="sec-home">
+    <div class="card">
+      <div class="card-title">Agradecimiento del día 🌿</div>
+      <textarea class="note-area" id="gratitude" placeholder="Hoy agradezco por..." rows="3"></textarea>
+    </div>
 
-  <main>
-    <section class="section active" id="sec-home">
-      <div class="card">
-        <div class="card-title">Agradecimiento del día 🌿</div>
-        <textarea class="note-area" id="gratitude" placeholder="Hoy agradezco por..." rows="3"></textarea>
+    <div class="card">
+      <div class="card-title">¿Cómo te sientes?</div>
+      <div class="mood-row">
+        <button class="mood-btn" onclick="setMood('😊', this)">😊</button>
+        <button class="mood-btn" onclick="setMood('✨', this)">✨</button>
+        <button class="mood-btn" onclick="setMood('🌿', this)">🌿</button>
+        <button class="mood-btn" onclick="setMood('☁️', this)">☁️</button>
+        <button class="mood-btn" onclick="setMood('😴', this)">😴</button>
       </div>
+    </div>
 
-      <div class="card">
-        <div class="card-title">¿Cómo te sientes?</div>
-        <div class="mood-row">
-          <button class="mood-btn" onclick="setMood('😊', this)">😊</button>
-          <button class="mood-btn" onclick="setMood('✨', this)">✨</button>
-          <button class="mood-btn" onclick="setMood('🌿', this)">🌿</button>
-          <button class="mood-btn" onclick="setMood('☁️', this)">☁️</button>
-          <button class="mood-btn" onclick="setMood('😴', this)">😴</button>
-        </div>
+    <div class="card">
+      <div class="card-title">Resumen de la semana</div>
+      <div id="weekSummary" style="font-size: 0.95rem; color: var(--text); line-height: 1.6;">
+        Calculando tus progresos...
       </div>
+    </div>
+  </section>
 
-      <div class="card">
-        <div class="card-title">Resumen de la semana</div>
-        <div id="weekSummary" style="font-size: 0.9rem; color: var(--text-light);">
-          Cargando tus progresos...
-        </div>
+  <section class="section" id="sec-week">
+    <div class="days-strip" id="daysStrip"></div>
+    <div class="card">
+      <div class="card-title" id="selectedDayTitle">Tareas</div>
+      <div style="display:flex; gap:8px; margin-bottom:15px;">
+        <input type="text" class="note-area" id="taskInput" placeholder="Nueva tarea..." style="padding: 10px;">
+        <button class="btn-add" onclick="addTask()">+</button>
       </div>
-    </section>
+      <div id="taskList"></div>
+    </div>
+  </section>
 
-    <section class="section" id="sec-week">
-      <div class="days-strip" id="daysStrip"></div>
-      
-      <div class="card">
-        <div class="card-title" id="selectedDayTitle">Tareas</div>
-        <div style="display:flex; gap:8px; margin-bottom:15px;">
-          <input class="task-input" id="taskInput" placeholder="Nueva tarea o recordatorio...">
-          <button class="btn-add" onclick="addTask()">+</button>
-        </div>
-        <div id="taskList"></div>
+  <section class="section" id="sec-alerts">
+    <div class="card">
+      <div class="card-title">Configurar Recordatorio 🔔</div>
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <input type="time" id="alertTime" class="note-area" style="padding:10px;">
+        <input type="text" id="alertText" class="note-area" placeholder="¿Qué quieres recordar?" style="padding:10px;">
+        <button class="btn-add" onclick="addAlert()" style="padding:15px;">Guardar Alerta</button>
       </div>
+    </div>
+    <div id="alertList"></div>
+  </section>
+</main>
 
-      <div class="card">
-        <div class="card-title">Notas Semanales</div>
-        <textarea class="note-area" id="weekNotes" placeholder="Cosas importantes para recordar esta semana..." rows="4"></textarea>
-      </div>
-    </section>
-
-    <section class="section" id="sec-reminders">
-      <div class="card">
-        <div class="card-title">Alertas y Avisos</div>
-        <div style="display:flex; flex-direction:column; gap:10px;">
-          <input type="time" id="remTime" class="task-input">
-          <input type="text" id="remText" class="task-input" placeholder="¿Qué debo recordarte?">
-          <button class="btn-add" style="padding:10px" onclick="addReminder()">Guardar Alerta 🔔</button>
-        </div>
-      </div>
-      <div id="reminderList"></div>
-    </section>
-  </main>
-
-  <nav>
-    <button class="nav-btn active" onclick="switchTab('home', this)">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
-      Inicio
-    </button>
-    <button class="nav-btn" onclick="switchTab('week', this)">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18"/></svg>
-      Semana
-    </button>
-    <button class="nav-btn" onclick="switchTab('reminders', this)">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
-      Alertas
-    </button>
-  </nav>
-</div>
+<nav>
+  <button class="nav-btn active" onclick="switchTab('home', this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+    Inicio
+  </button>
+  <button class="nav-btn" onclick="switchTab('week', this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18"/></svg>
+    Semana
+  </button>
+  <button class="nav-btn" onclick="switchTab('alerts', this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+    Alertas
+  </button>
+</nav>
 
 <div id="toast"></div>
 
 <script>
+// ESTADO Y CARGA
 let state = {
   tasks: {},
   moods: {},
   gratitude: {},
-  reminders: [],
-  weekNotes: ""
+  alerts: []
 };
 
 const TODAY = new Date().toISOString().split('T')[0];
 let selectedDay = TODAY;
 
-function save() { localStorage.setItem('agenda_bienestar_v1', JSON.stringify(state)); }
+function save() { localStorage.setItem('mi_agenda_data', JSON.stringify(state)); updateSummary(); }
 function load() {
-  const saved = localStorage.getItem('agenda_bienestar_v1');
+  const saved = localStorage.getItem('mi_agenda_data');
   if(saved) state = JSON.parse(saved);
 }
 
-function enterApp() {
-  document.getElementById('splash').classList.add('hide');
-  document.getElementById('app').classList.add('show');
-  init();
-}
-
+// INICIALIZACIÓN
 function init() {
   load();
-  renderHeader();
+  renderDate();
   renderWeekStrip();
   renderTasks();
-  renderReminders();
-  document.getElementById('gratitude').value = state.gratitude[TODAY] || "";
-  document.getElementById('weekNotes').value = state.weekNotes || "";
+  renderAlerts();
+  updateSummary();
   
-  // Guardado automático de textos
-  document.getElementById('gratitude').oninput = (e) => { state.gratitude[TODAY] = e.target.value; save(); };
-  document.getElementById('weekNotes').oninput = (e) => { state.weekNotes = e.target.value; save(); };
+  document.getElementById('gratitude').value = state.gratitude[TODAY] || "";
+  document.getElementById('gratitude').oninput = (e) => {
+    state.gratitude[TODAY] = e.target.value;
+    save();
+  };
+
+  // Verificar alertas cada minuto
+  setInterval(checkAlerts, 30000);
 }
 
-function renderHeader() {
+function renderDate() {
   const options = { weekday: 'long', day: 'numeric', month: 'long' };
   document.getElementById('headerDate').textContent = new Date().toLocaleDateString('es-ES', options);
 }
 
+function updateSummary() {
+  const last7Days = Array.from({length: 7}, (_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    return d.toISOString().split('T')[0];
+  });
+
+  const thanksCount = last7Days.filter(day => state.gratitude[day] && state.gratitude[day].length > 2).length;
+  
+  let totalTasks = 0;
+  let completedTasks = 0;
+  last7Days.forEach(day => {
+    if(state.tasks[day]) {
+      totalTasks += state.tasks[day].length;
+      completedTasks += state.tasks[day].filter(t => t.done).length;
+    }
+  });
+
+  const summaryHTML = `
+    ✨ Has agradecido <b>${thanksCount} de los últimos 7 días</b>.<br>
+    ✅ Has completado <b>${completedTasks} tareas</b> esta semana.<br>
+    ${thanksCount >= 5 ? '🌟 ¡Qué buena racha de gratitud!' : '🌿 Sigue así, cada día cuenta.'}
+  `;
+  document.getElementById('weekSummary').innerHTML = summaryHTML;
+}
+
+// GESTIÓN DE TAREAS
 function renderWeekStrip() {
   const strip = document.getElementById('daysStrip');
   strip.innerHTML = '';
-  const now = new Date();
   for(let i = -2; i < 5; i++) {
     const d = new Date();
-    d.setDate(now.getDate() + i);
+    d.setDate(d.getDate() + i);
     const k = d.toISOString().split('T')[0];
     const chip = document.createElement('div');
     chip.className = `day-chip ${k === selectedDay ? 'active' : ''}`;
@@ -316,20 +272,14 @@ function addTask() {
 function renderTasks() {
   const list = document.getElementById('taskList');
   const dayTasks = state.tasks[selectedDay] || [];
-  document.getElementById('selectedDayTitle').textContent = selectedDay === TODAY ? "Tareas de hoy" : "Tareas del " + selectedDay;
-  
-  if(dayTasks.length === 0) {
-    list.innerHTML = '<p style="text-align:center; color:#ccc; font-size:0.9rem">No hay tareas para este día</p>';
-    return;
-  }
-
-  list.innerHTML = dayTasks.map(t => `
+  document.getElementById('selectedDayTitle').textContent = selectedDay === TODAY ? "Tareas de hoy" : "Tareas seleccionadas";
+  list.innerHTML = dayTasks.length ? dayTasks.map(t => `
     <div class="task-item ${t.done ? 'done' : ''}">
-      <input type="checkbox" ${t.done ? 'checked' : ''} onclick="toggleTask(${t.id})">
+      <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTask(${t.id})">
       <span style="flex:1">${t.text}</span>
-      <span onclick="deleteTask(${t.id})" style="color:var(--rose-deep); cursor:pointer">✕</span>
+      <span onclick="deleteTask(${t.id})" style="cursor:pointer; color:var(--rose-deep)">✕</span>
     </div>
-  `).join('');
+  `).join('') : '<p style="color:#aaa; text-align:center; padding:20px;">No hay tareas</p>';
 }
 
 function toggleTask(id) {
@@ -342,36 +292,68 @@ function deleteTask(id) {
   save(); renderTasks();
 }
 
+// ALERTAS Y SONIDO
+function addAlert() {
+  const time = document.getElementById('alertTime').value;
+  const text = document.getElementById('alertText').value;
+  if(!time || !text) return;
+  state.alerts.push({ id: Date.now(), time, text, active: true });
+  document.getElementById('alertTime').value = "";
+  document.getElementById('alertText').value = "";
+  save(); renderAlerts();
+  showToast("🔔 Alerta guardada");
+}
+
+function renderAlerts() {
+  const list = document.getElementById('alertList');
+  list.innerHTML = state.alerts.map(a => `
+    <div class="card" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+      <div><b>${a.time}</b> - ${a.text}</div>
+      <button onclick="deleteAlert(${a.id})" style="background:none; border:none; color:var(--rose-deep); font-size:1.2rem;">✕</button>
+    </div>
+  `).join('');
+}
+
+function deleteAlert(id) {
+  state.alerts = state.alerts.filter(a => a.id !== id);
+  save(); renderAlerts();
+}
+
+function playBeep() {
+  const context = new (window.AudioContext || window.webkitAudioContext)();
+  const osc = context.createOscillator();
+  const gain = context.createGain();
+  osc.connect(gain);
+  gain.connect(context.destination);
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(880, context.currentTime); // Nota La
+  gain.gain.setValueAtTime(0, context.currentTime);
+  gain.gain.linearRampToValueAtTime(0.5, context.currentTime + 0.1);
+  gain.gain.linearRampToValueAtTime(0, context.currentTime + 0.5);
+  osc.start();
+  osc.stop(context.currentTime + 0.6);
+}
+
+function checkAlerts() {
+  const now = new Date();
+  const currentTime = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
+  
+  state.alerts.forEach((alert, index) => {
+    if(alert.active && alert.time === currentTime) {
+      playBeep();
+      showToast("📢 RECORDATORIO: " + alert.text);
+      alert.active = false; // Desactivar para que no suene cada 30 seg
+      save();
+    }
+  });
+}
+
+// UI HELPERS
 function setMood(emoji, btn) {
   state.moods[TODAY] = emoji;
   document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
   btn.classList.add('selected');
   save();
-  showToast("Estado de ánimo guardado");
-}
-
-function addReminder() {
-  const time = document.getElementById('remTime').value;
-  const text = document.getElementById('remText').value;
-  if(!time || !text) return;
-  state.reminders.push({ id: Date.now(), time, text });
-  save(); renderReminders();
-  showToast("Recordatorio guardado");
-}
-
-function renderReminders() {
-  const list = document.getElementById('reminderList');
-  list.innerHTML = state.reminders.map(r => `
-    <div class="card" style="margin-bottom:10px; display:flex; justify-content:space-between; align-items:center">
-      <div><strong>${r.time}</strong> - ${r.text}</div>
-      <span onclick="deleteReminder(${r.id})" style="cursor:pointer">✕</span>
-    </div>
-  `).join('');
-}
-
-function deleteReminder(id) {
-  state.reminders = state.reminders.filter(r => r.id !== id);
-  save(); renderReminders();
 }
 
 function switchTab(tab, btn) {
@@ -383,14 +365,12 @@ function switchTab(tab, btn) {
 
 function showToast(msg) {
   const t = document.getElementById('toast');
-  t.textContent = msg; t.style.opacity = 1;
-  setTimeout(() => t.style.opacity = 0, 2000);
+  t.innerHTML = msg; t.style.opacity = 1;
+  setTimeout(() => t.style.opacity = 0, 4000);
 }
 
-// Auto-entrar si ya se ha usado
-if(localStorage.getItem('agenda_bienestar_v1')) {
-  setTimeout(enterApp, 500);
-}
+window.onload = init;
 </script>
+
 </body>
 </html>
